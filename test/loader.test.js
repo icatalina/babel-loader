@@ -5,6 +5,7 @@ import rimraf from "rimraf";
 import { satisfies } from "semver";
 import webpack from "webpack";
 import createTestDirectory from "./helpers/createTestDirectory";
+import { parseSourceMap } from "../src/index";
 
 const outputDir = path.join(__dirname, "output/loader");
 const babelLoader = path.join(__dirname, "../lib");
@@ -179,5 +180,30 @@ test.cb("should load ESM config files", t => {
     }
     t.deepEqual(stats.compilation.warnings, []);
     t.end();
+  });
+});
+
+// passing source map json to loader
+const sampleSourceMapJson = {
+  version: 3,
+  sources: ["/home/aqua/coding/atri/src/app/app.tsx"],
+  names: [],
+  mappings: ";;;AAAA",
+  sourcesContent: [
+    'ReactDOM.render(, document.body.querySelector("#root"))\\n',
+  ],
+};
+
+const sourceMapJsonTestAssetsPass = [
+  [JSON.stringify(sampleSourceMapJson), sampleSourceMapJson],
+  [undefined, undefined],
+  ["kaljsdfkl", "kaljsdfkl"],
+  [false, false],
+  [{}, {}],
+];
+
+test("passing source map json to loader", t => {
+  sourceMapJsonTestAssetsPass.forEach(([input, expected]) => {
+    t.deepEqual(parseSourceMap(input), expected);
   });
 });

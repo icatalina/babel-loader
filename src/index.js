@@ -52,6 +52,8 @@ function makeLoader(callback) {
   };
 }
 
+module.exports.parseSourceMap = parseSourceMap;
+
 function parseSourceMap(sourcemap) {
   try {
     return typeof sourcemap === "string" ? JSON.parse(sourcemap) : sourcemap;
